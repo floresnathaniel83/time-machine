@@ -3,8 +3,52 @@
 	box-sizing: border-box;
 }
 
+
 h1 {
-	font-size: 300px;
+	font-size: 25px;
 	text-align: center;
-	color: fuchsia;
+	color: purple;
+}
+
+
+
+#appContainer {
+
+	border: 5px solid purple;
+	background: lightblue;
+	height: 200px;
+
+	#timeContainer {
+
+		width: 30%;
+		margin: 0 auto;
+			
+			#time {
+				color: orange;
+
+			}
+			
+
+		} 
+
+	#buttonContainer {
+		
+		width: 30%;
+		margin: 0 auto;
+		border: none;
+
+			#timeChanger {
+
+			    width: 40%;
+			    height: 70px;
+			    border-radius: 50%;
+
+
+			}
+
+	}
+
+
+
+
 }
