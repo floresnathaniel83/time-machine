@@ -1,138 +1,112 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import Backbone from 'backbone'
+const app = function() {
 
-var futureInterval
-var pastInterval
-	
-const AppView = React.createClass ({
-
-	
-
-	getInitialState: function () {
-		
-		return {
-			time: 2016
-	
+	const getCurrentYear = function() {
+			var d = new Date()
+			return d.getFullYear()
 		}
 
+	var counter = 1000
+		
+	const BackToTheFuture = React.createClass({
+		getInitialState: function () {
+			return {
+				year: getCurrentYear(),
+				docBrown: ''
+				
+			}
 
-	},
+		},
 
-	componentWillMount: function () {
-		Backbone.Events.on('backToTheFuture', (payload) => {
+		_fluxCapacitorFuture: function () {
+			if(this.state.docBrown === 'toTheFuture'){
+			this.state.year += 1
 			this.setState({
-				time: payload
-
+				year: this.state.year
 
 			})
-			
 
-		})
-
-
+			counter *= 0.9
+			this.future = setTimeout(this._fluxCapacitorFuture, counter)
+		}
 	},
 
-	render: function () {
-		return (
-
-				<div id = "appContainer">
-					
-					<Header />
-					<TimeContainer currentYear = {this.state.time} />
-					<TimeButtons currentYear = {this.state.time}/>
-					
-						
-				</div>
-
-			)
-		}
-
-	})
-
-	const TimeButtons = React.createClass ({
-		_future: function () {
-			var newYear = this.props.currentYear + 1
-        	Backbone.Events.trigger('backToTheFuture', newYear)
-        	
-
-		},
-
-
-		_moveForward: function () {
-			var futureYear = this.props.currentYear + 1
-			Backbone.Events.trigger ('backToTheFuture', futureYear)
-			futureInterval = setInterval(this._future,1000)
-			
-		},
-
-		_past: function () {
-			var newYear = this.props.currentYear - 1
-        	Backbone.Events.trigger('backToTheFuture', newYear)
-
-		},
+		_fluxCapacitorPast: function () {
+			if(this.state.docBrown === 'toThePast'){
+			this.state.year -= 1
+			this.setState({
+				year: this.state.year
 		
+			})
 
-		_moveBack: function () {
-			var pastYear = this.props.currentYear - 1
-			Backbone.Events.trigger ('backToTheFuture', pastYear)
-			pastInterval = setInterval(this._past,1000)
-
-
-		},
+			counter *= 0.9
+			this.past = setTimeout(this._fluxCapacitorPast, counter)
+		}
+	},
 
 		_stopTime: function () {
-			clearInterval(futureInterval)
-			clearInterval(pastInterval)
+				this.state.docBrown = 'stop'
+				this.setState({
+					docBrown: this.state.docBrown
+
+			})
+
+
+			},
+
+		_moveBack: function () {
+		
+			this.state.docBrown = "toThePast"
+			this.setState({
+				docBrown: this.state.docBrown
+				})
+
+			this._fluxCapacitorPast()
 
 		},
 
-		
+		_moveForward: function () {
+			this.state.docBrown = "toTheFuture"
+			this.setState({
+				docBrown: this.state.docBrown
+				})
+			
+			this._fluxCapacitorFuture()
+			
+			
+		},
 		
 		render:	function () {
-			console.log(this.props.currentYear)
+			var future = ''
+			var past = ''
+			var stop = ''
+			if(this.state.docBrown === 'toTheFuture') {
+					future = 'toTheFuture'
+			} else if(this.state.docBrown === 'toThePast') {
+					past = 'toThePast'
+			} else if(this.state.docBrown === 'stop') {
+					stop = 'stop'
+			}
+
 			return (
-					<div id = "timeButtonsContainer">
-						<button id = "future" onClick = {this._moveForward}>future</button>
-						<button id = "stop" onClick = {this._stopTime}>stop</button>
-						<button id = "past" onClick = {this._moveBack}>past</button>
+					<div id = "timeContainer">
+						<h1 className="font-effect-anaglyph">Back To The Future</h1>
+						<div className="font-effect-anaglyph" id= "time">{this.state.year}</div>
+						<div id= 'navBar'>
+							<button id = {past} onClick = {this._moveBack}>past</button>
+							<button id = {stop} onClick = {this._stopTime}>stop</button>
+							<button id = {future} onClick = {this._moveForward}>future</button>
+							
+						</div>
 					</div>
 				)
 			}
-	})
+		})
 
-	const Header = React.createClass ({
-		render: function () {
-			return (
+		ReactDOM.render(<BackToTheFuture />, document.querySelector('.container'))
+}
 
-				<div id = 'headerContainer'>
-
-					<h1>Time Machine</h1>
-
-				</div>
-
-
-				)
-
-		}
-		
-
-	})
-
-	const TimeContainer = React.createClass ({
-			render: function () {
-				return (
-
-
-						<div id = "time">{this.props.currentYear}</div>
-					)
-
-		}
-
-	})
-
-	
-
-	ReactDOM.render(<AppView />, document.querySelector('.container'))
+app()
 
